@@ -8,9 +8,11 @@ export class AlbumsController extends BaseController {
     this.router
       .get('', this.getAllAlbums)
       .get('/:albumId', this.getAlbumById)
+
       .use(Auth0Provider.getAuthorizedUserInfo)
 
       .post('', this.createAlbum)
+      .delete('/:albumId', this.archiveAlbum)
   }
 
   async getAllAlbums(request, response, next) {
@@ -43,4 +45,15 @@ export class AlbumsController extends BaseController {
       next(error)
     }
   }
+
+  async archiveAlbum(request, response, next) {
+    try {
+      const albumId = request.params.albumId
+      const album = await albumsService.archiveAlbum(albumId)
+      response.send(album)
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }

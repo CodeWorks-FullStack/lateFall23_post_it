@@ -13,7 +13,6 @@ class AlbumsService {
     if (!album) {
       throw new BadRequest(`Invalid id: ${albumId}`)
     }
-
     return album
   }
   async createAlbum(albumData) {
@@ -21,6 +20,25 @@ class AlbumsService {
     await album.populate('creator', 'name picture')
     return album
   }
+
+  async archiveAlbum(albumId) {
+
+    // const albumToDelete = await this.getAlbumById(albumId)
+    // NOTE .remove() is no longer supported by mongoose, call .deleteOne() instead now 
+    // await albumToDelete.deleteOne()
+    // return `${albumToDelete.title} has been deleted`
+
+
+    const albumToArchive = await this.getAlbumById(albumId)
+
+    albumToArchive.archived = !albumToArchive.archived
+
+    await albumToArchive.save()
+
+    return albumToArchive
+
+  }
+
 }
 
 export const albumsService = new AlbumsService()
