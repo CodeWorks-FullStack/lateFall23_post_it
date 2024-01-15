@@ -23,6 +23,7 @@ class AlbumsService {
 
   async archiveAlbum(albumId) {
 
+    // REVIEW we aren't actually deleting the album from our database, so we aren't going to run the below code
     // const albumToDelete = await this.getAlbumById(albumId)
     // NOTE .remove() is no longer supported by mongoose, call .deleteOne() instead now 
     // await albumToDelete.deleteOne()
@@ -31,8 +32,10 @@ class AlbumsService {
 
     const albumToArchive = await this.getAlbumById(albumId)
 
+    // NOTE flips bool
     albumToArchive.archived = !albumToArchive.archived
 
+    // NOTE notifies database that we changed data
     await albumToArchive.save()
 
     return albumToArchive
