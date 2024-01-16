@@ -12,7 +12,7 @@ class AlbumsService{
     AppState.albums = response.data.map(album => new Album(album))
   }
 
-  async getGetAlbumById(albumId){
+  async getAlbumById(albumId){
     AppState.activeAlbum = null
     const response = await api.get(`api/albums/${albumId}`)
     logger.log('📡🚵‍♀️', response.data)

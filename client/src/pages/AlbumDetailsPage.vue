@@ -32,7 +32,7 @@ export default {
     })
     async function getAlbumById(){
       try {
-        await albumsService.getGetAlbumById(route.params.albumId)
+        await albumsService.getAlbumById(route.params.albumId)
       } catch (error) {
         Pop.error(error)
       }
