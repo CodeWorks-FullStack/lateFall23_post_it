@@ -2,6 +2,7 @@ import { Auth0Provider } from "@bcwdev/auth0provider";
 import { albumsService } from "../services/AlbumsService.js";
 import BaseController from "../utils/BaseController.js";
 import { picturesService } from "../services/PicturesService.js";
+import { collaboratorsService } from "../services/CollaboratorsService.js";
 
 export class AlbumsController extends BaseController {
   constructor () {
@@ -10,6 +11,8 @@ export class AlbumsController extends BaseController {
       .get('', this.getAllAlbums)
       .get('/:albumId', this.getAlbumById)
       .get('/:albumId/pictures', this.getPicturesInAlbum)
+      .get('/:albumId/collaborators', this.getCollaboratorsForAlbum)
+
       .use(Auth0Provider.getAuthorizedUserInfo)
 
       .post('', this.createAlbum)
@@ -40,6 +43,16 @@ export class AlbumsController extends BaseController {
       const albumId = request.params.albumId
       const pictures = await picturesService.getPicturesInAlbum(albumId)
       response.send(pictures)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getCollaboratorsForAlbum(request, response, next) {
+    try {
+      const albumId = request.params.albumId
+      const collaborators = await collaboratorsService.getCollaboratorsForAlbum(albumId)
+      response.send(collaborators)
     } catch (error) {
       next(error)
     }
