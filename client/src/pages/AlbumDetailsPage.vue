@@ -1,15 +1,27 @@
 <template>
   <div class="container-fluid">
     <section class="row">
-      <div class="col-3 d-flex" v-if="activeAlbum">
+      <!-- SECTION album details -->
+      <div class="col-3 h-50 d-flex" v-if="activeAlbum">
         <img :src="activeAlbum.coverImg" alt="cover image of the album" class="img-fluid w-50" >
-        <div class="bg-danger w-50 rounded">
-          <h4>{{activeAlbum.title}}</h4>
-          <h5> by {{ activeAlbum.creator.name }}</h5>
+        <div class="h-50 w-50">
+          <div class="bg-danger  rounded">
+            <h4>{{activeAlbum.title}}</h4>
+            <h5> by {{ activeAlbum.creator.name }}</h5>
+          </div>
+          <div class="h-50">
+            <button v-if="account.id" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#add-picture-modal">add picture <i class="mdi mdi-image"></i><i class="mdi mdi-plus"></i></button>
+          </div>
         </div>
+      </div>
+      <!-- SECTION picture area -->
+      <div class="col-9 masonry">
+        <!-- {{ pictures }} -->
+        <img v-for="picture in pictures" class="img-fluid mb-2 rounded" :src="picture.imgUrl" alt="">
       </div>
     </section>
   </div>
+  <AddPictureForm/>
 </template>
 
 
@@ -18,7 +30,9 @@ import { computed, onMounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { AppState } from '../AppState.js';
 import { albumsService } from '../services/AlbumsService.js';
+import AddPictureForm from '../components/AddPictureForm.vue'
 import Pop from '../utils/Pop.js';
+import { picturesService } from '../services/PicturesService.js';
 export default {
   setup(){
     const route = useRoute()
@@ -29,6 +43,7 @@ export default {
     watchEffect(()=>{
       route.params.albumId
       getAlbumById()
+      getAlbumPictures()
     })
     async function getAlbumById(){
       try {
@@ -37,14 +52,26 @@ export default {
         Pop.error(error)
       }
     }
+    async function getAlbumPictures(){
+      try {
+        await picturesService.getAlbumPictures(route.params.albumId)
+      } catch (error) {
+        Pop.error(error)
+      }
+    }
   return {
-    activeAlbum : computed(()=> AppState.activeAlbum)
+    activeAlbum : computed(()=> AppState.activeAlbum),
+    pictures: computed(( )=> AppState.pictures),
+    account: computed(()=> AppState.account)
    }
-  }
+  },
+  components: {AddPictureForm}
 };
 </script>
 
 
 <style lang="scss" scoped>
-
+.masonry{
+  columns: 200px;
+}
 </style>

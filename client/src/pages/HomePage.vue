@@ -19,7 +19,7 @@
   </section>
   <section class="row">
     <!-- {{ albums }} -->
-    <div class="col-3" v-for="album in albums" :key="album.id" v-if="albums.length">
+    <div class="col-6 col-md-3" v-for="album in albums" :key="album.id" v-if="albums.length">
       <!-- {{ album.title }} -->
       <AlbumCard :album="album"/>
     </div>
