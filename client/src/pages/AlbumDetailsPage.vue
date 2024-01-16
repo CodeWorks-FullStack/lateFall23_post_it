@@ -14,7 +14,7 @@
 
 
 <script>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { AppState } from '../AppState.js';
 import { albumsService } from '../services/AlbumsService.js';
@@ -22,7 +22,12 @@ import Pop from '../utils/Pop.js';
 export default {
   setup(){
     const route = useRoute()
-    onMounted(()=>{
+    // onMounted(()=>{
+    //   getAlbumById()
+    // })
+    // NOTE watchEffect, is like a watch, but instead of watching a particular value, it watches, any 'watchable' property accessed inside of it
+    watchEffect(()=>{
+      route.params.albumId
       getAlbumById()
     })
     async function getAlbumById(){

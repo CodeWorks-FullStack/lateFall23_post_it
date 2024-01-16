@@ -18,6 +18,14 @@ class AlbumsService{
     logger.log('📡🚵‍♀️', response.data)
     AppState.activeAlbum = new Album(response.data)
   }
+
+  async createAlbum(albumData){
+    const response = await api.post('api/albums', albumData)
+    logger.log('📡✨', response.data)
+    const newAlbum = new Album(response.data)
+    AppState.albums.push(newAlbum)
+    return newAlbum
+  }
 }
 
 export const albumsService = new AlbumsService()
