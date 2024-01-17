@@ -1,10 +1,10 @@
 import { dbContext } from "../db/DbContext.js"
-import { BadRequest } from "../utils/Errors.js"
+import { BadRequest, Forbidden } from "../utils/Errors.js"
 
 class AlbumsService {
 
   async getAllAlbums() {
-    const albums = await dbContext.Albums.find().populate('creator', 'name picture')
+    const albums = await dbContext.Albums.find().populate('creator', 'name picture').populate('memberCount')
     return albums
   }
   async getAlbumById(albumId) {
@@ -21,7 +21,7 @@ class AlbumsService {
     return album
   }
 
-  async archiveAlbum(albumId) {
+  async archiveAlbum(albumId, userId) {
 
     // REVIEW we aren't actually deleting the album from our database, so we aren't going to run the below code
     // const albumToDelete = await this.getAlbumById(albumId)
@@ -31,6 +31,10 @@ class AlbumsService {
 
 
     const albumToArchive = await this.getAlbumById(albumId)
+
+    if (albumToArchive.creatorId != userId) {
+      throw new Forbidden("NOT YOUR ALBUM, BUD")
+    }
 
     // NOTE flips bool
     albumToArchive.archived = !albumToArchive.archived

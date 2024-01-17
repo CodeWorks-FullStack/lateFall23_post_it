@@ -1,13 +1,22 @@
 import { dbContext } from "../db/DbContext.js"
-import { BadRequest } from "../utils/Errors.js"
+import { BadRequest, Forbidden } from "../utils/Errors.js"
 
 class CollaboratorsService {
 
   async getMyAlbumCollaborations(userId) {
-    const albumCollaborations = await dbContext.Collaborators.find({ accountId: userId }).populate('album')
-
     // NOTE redundant data!
     // const albumCollaborations = await dbContext.Collaborators.find({ accountId: userId }).populate('album').populate('profile')
+
+    // const albumCollaborations = await dbContext.Collaborators.find({ accountId: userId }).populate('album')
+
+    // NOTE how to run populate on a nested schema
+    // REVIEW might not need this for your checkpoint
+    const albumCollaborations = await dbContext.Collaborators.find({ accountId: userId }).populate({
+      path: 'album',
+      populate: {
+        path: 'memberCount'
+      }
+    })
 
     return albumCollaborations
   }
@@ -21,11 +30,15 @@ class CollaboratorsService {
     return collaborator
   }
 
-  async deleteCollaborator(collaboratorId) {
+  async deleteCollaborator(collaboratorId, userId) {
     const collaborator = await dbContext.Collaborators.findById(collaboratorId).populate('album')
 
     if (!collaborator) {
       throw new BadRequest(`Invalid id: ${collaboratorId}`)
+    }
+
+    if (collaborator.accountId != userId) {
+      throw new Forbidden("OOPS, SOMEHTHING WENT WRONG 😉")
     }
 
     await collaborator.deleteOne()

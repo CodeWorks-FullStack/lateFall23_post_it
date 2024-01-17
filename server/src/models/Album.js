@@ -20,3 +20,11 @@ AlbumSchema.virtual('creator', {
   ref: 'Account',
   justOne: true
 })
+
+AlbumSchema.virtual('memberCount', {
+  localField: '_id',
+  foreignField: 'albumId',
+  ref: 'Collaborator',
+  // NOTE don't return the data, just count how many matches there are
+  count: true
+})

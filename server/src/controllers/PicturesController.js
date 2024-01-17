@@ -8,7 +8,6 @@ export class PicturesController extends BaseController {
     this.router
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post('', this.createPicture)
-
   }
 
   async createPicture(request, response, next) {

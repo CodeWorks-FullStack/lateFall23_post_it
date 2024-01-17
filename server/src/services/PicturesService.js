@@ -1,4 +1,6 @@
 import { dbContext } from "../db/DbContext.js"
+import { BadRequest } from "../utils/Errors.js"
+import { albumsService } from "./AlbumsService.js"
 
 class PicturesService {
   async getPicturesInAlbum(albumId) {
@@ -9,6 +11,13 @@ class PicturesService {
     return pictures
   }
   async createPicture(pictureData) {
+    const album = await albumsService.getAlbumById(pictureData.albumId)
+
+    // REVIEW make sure the ablum is not archived before running code below if statement
+    if (album.archived) {
+      throw new BadRequest(`${album.title} has been archived, you can not post additional pictures to it`)
+    }
+
     const picture = await dbContext.Pictures.create(pictureData)
     await picture.populate('creator', 'name picture')
     return picture
