@@ -14,6 +14,7 @@ class PicturesService {
     const album = await albumsService.getAlbumById(pictureData.albumId)
 
     // REVIEW make sure the ablum is not archived before running code below if statement
+    // if(ablum.archived == true)
     if (album.archived) {
       throw new BadRequest(`${album.title} has been archived, you can not post additional pictures to it`)
     }
