@@ -1,7 +1,15 @@
 <template>
  <div class="container-fluid">
   <section class="row">
+    <div class="col-12 fw-bold" v-if="accountCollaborators.length">
+      The Albums you are in collaboration with
+    </div>
     <!-- TODO this is where my albums go -->
+    <!-- {{ accountCollaborators }} -->
+    <div v-for="collaborator in accountCollaborators" :key="collaborator.id" class="col-6 col-md-3 mb-5 position-relative">
+      <AlbumCard :album="collaborator.album"/>
+      <button @click="deleteCollaboration(collaborator.id)" class="btn btn-warning position-absolute top-0">stop collaborating <i class="mdi mdi-heart-broken"></i></button>
+    </div>
   </section>
  </div>
  <div class="container">
@@ -34,10 +42,12 @@ import { AppState } from '../AppState.js';
 import AlbumCard from '../components/AlbumCard.vue';
 import { albumsService } from '../services/AlbumsService.js';
 import Pop from '../utils/Pop.js';
+import { collaboratorsService } from '../services/CollaboratorsService.js';
 export default {
   setup() {
     onMounted(()=> {
       getAllAlbums()
+
     })
     const filterBy = ref('')
     async function getAllAlbums(){
@@ -55,7 +65,16 @@ export default {
         } else {
           return AppState.albums
         }
-      })
+      }),
+      accountCollaborators: computed(()=> AppState.accountCollaborators),
+      async deleteCollaboration(collabId){
+        try {
+          await collaboratorsService.deleteCollaboration(collabId)
+          Pop.success('no mo collaboration')
+        } catch (error) {
+          Pop.error(error)
+        }
+      }
     }
   },
   components: {AlbumCard}

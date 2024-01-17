@@ -6,7 +6,7 @@
       <div class="bg-danger">
         <h4 class="text-center">{{ album.title }}</h4>
         <div class="text-center">
-          <b>2 <i class="mdi mdi-heart"></i></b>
+          <b>{{ album.memberCount }} <i class="mdi mdi-heart"></i></b>
         </div>
       </div>
     </div>
